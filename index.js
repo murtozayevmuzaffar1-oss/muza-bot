@@ -4,7 +4,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.send('Muza bot ishlayapti');
+  res.send('Muza bot ishlayapti 🚀');
 });
 
 app.listen(process.env.PORT || 3000, () => {
@@ -31,9 +31,15 @@ function menu() {
   return {
     reply_markup: {
       inline_keyboard: [
-        [{ text: '✅ Bajargan loyihalarim', callback_data: 'projects' }],
-        [{ text: '📝 Buyurtma berish', callback_data: 'order' }],
-        [{ text: '👨‍💻 Dasturchi haqida', callback_data: 'about' }],
+        [
+          { text: '✅ Bajargan loyihalarim', callback_data: 'projects' }
+        ],
+        [
+          { text: '📝 Buyurtma berish', callback_data: 'order' }
+        ],
+        [
+          { text: '👨‍💻 Dasturchi haqida', callback_data: 'about' }
+        ],
         [
           { text: '📞 Aloqa', callback_data: 'contact' },
           { text: '❓ FAQ', callback_data: 'faq' }
@@ -53,21 +59,34 @@ function backMenu() {
   };
 }
 
-bot.onText(/\/start/, (msg) => {
+bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
+
   users.add(chatId);
 
-  bot.sendMessage(chatId, `👋 Salom, ${msg.from.first_name}
+  await bot.sendMessage(chatId, '♻️ Menu yangilanmoqda...', {
+    reply_markup: {
+      remove_keyboard: true
+    }
+  });
 
-Men Muzaffarning rasmiy xizmat botiman.
+  await bot.sendPhoto(
+    chatId,
+    './banner.jpg',
+    {
+      caption: `🚀 Muzaffar Developer
 
-Bu yerda siz:
-• bajarilgan loyihalarimni ko‘rishingiz
-• web sayt, bot yoki mobile ilova buyurtma qilishingiz
-• dasturchi haqida ma’lumot olishingiz
-• aloqa ma’lumotlarini ko‘rishingiz mumkin.
+• Web saytlar
+• Telegram botlar
+• Mobile ilovalar
+• AI texnologiyalar
 
-Quyidagilardan birini tanlang 👇`, menu());
+Zamonaviy va sifatli digital loyihalar yarataman 🔥
+
+Quyidagilardan birini tanlang 👇`,
+      ...menu()
+    }
+  );
 });
 
 bot.on('callback_query', async (query) => {
@@ -77,7 +96,14 @@ bot.on('callback_query', async (query) => {
   await bot.answerCallbackQuery(query.id);
 
   if (data === 'menu') {
-    return bot.sendMessage(chatId, 'Asosiy menyu 👇', menu());
+    return bot.sendPhoto(
+      chatId,
+      './banner.jpg',
+      {
+        caption: `🚀 Asosiy menyu`,
+        ...menu()
+      }
+    );
   }
 
   if (data === 'projects') {
@@ -89,31 +115,41 @@ ${LINKS.portfolio}
 ☁️ Weather Web:
 ${LINKS.weather}
 
-📱 Weather App:
-Weather Uzb APK tayyor va ishlaydi.
+📱 Weather APK:
+Flutter asosida yaratilgan ob-havo ilovasi.
 
-Hozirda:
-🚀 Samarkand Inside startupi
-🏠 Ijara ilovasi
+🚀 Samarkand Inside
+🏠 Ijara App
 
-ustida ishlamoqdaman.`, backMenu());
+startup loyihalari ustida ishlamoqdaman.`, backMenu());
   }
 
   if (data === 'about') {
-    return bot.sendMessage(chatId, `👨‍💻 Dasturchi haqida
+    return bot.sendPhoto(
+      chatId,
+      './about.jpg',
+      {
+        caption: `👨‍💻 Dasturchi haqida
 
 Salom! Mening ismim Muzaffar Murtazoyev.
 
-Men ISFT institutining “Axborot tizimlari va texnologiyalari” yo‘nalishi bo‘yicha talabasiman hamda School 21 da mobil dasturlash (Android va iOS) yo‘nalishida tahsil olaman.
+Men:
+• Web Developer
+• Bot Developer
+• Mobile Developer
+• AI Enthusiast
 
-Asosiy yo‘nalishlarim:
-• Web development
-• Telegram bot yaratish
-• Mobile ilovalar
-• AI texnologiyalari
+yo‘nalishlarida faoliyat yuritaman.
 
-Maqsadim:
-zamonaviy va foydali digital loyihalar yaratish 🚀`, backMenu());
+Hozirda:
+🚀 Samarkand Inside
+🏠 Ijara App
+🌦 Weather Uzb
+
+loyihalari ustida ishlamoqdaman.`,
+        ...backMenu()
+      }
+    );
   }
 
   if (data === 'contact') {
@@ -147,6 +183,7 @@ Javob: Ha.`, backMenu());
 
   if (data === 'order') {
     orders[chatId] = { step: 'name' };
+
     return bot.sendMessage(chatId, `📝 Buyurtma berish
 
 Ismingizni yozing:`);
@@ -162,6 +199,7 @@ bot.on('message', async (msg) => {
   if (orders[chatId]?.step === 'name') {
     orders[chatId].name = text;
     orders[chatId].step = 'phone';
+
     return bot.sendMessage(chatId, `📞 Telefon raqamingizni yozing:
 
 Masalan:
@@ -171,6 +209,7 @@ Masalan:
   if (orders[chatId]?.step === 'phone') {
     orders[chatId].phone = text;
     orders[chatId].step = 'service';
+
     return bot.sendMessage(chatId, `💼 Qaysi xizmat kerak?
 
 Masalan:
@@ -187,13 +226,13 @@ Masalan:
 
     await bot.sendMessage(chatId, `✅ Buyurtmangiz qabul qilindi!
 
-Ism:
+👤 Ism:
 ${order.name}
 
-Telefon:
+📞 Telefon:
 ${order.phone}
 
-Xizmat:
+💼 Xizmat:
 ${order.service}
 
 Tez orada siz bilan bog‘lanamiz 🚀`, menu());
@@ -221,13 +260,14 @@ ${chatId}`);
 
   if (text === '/stat') {
     if (chatId !== ADMIN_ID) return;
+
     return bot.sendMessage(chatId, `📊 Statistika
 
-Foydalanuvchilar:
+👥 Foydalanuvchilar:
 ${users.size} ta`);
   }
 
-  bot.sendMessage(chatId, 'Menyudan birini tanlang 👇', menu());
+  bot.sendMessage(chatId, '👇 Menyudan birini tanlang', menu());
 });
 
-console.log('Premium bot ishlayapti...');
+console.log('Premium bot ishlayapti 🚀');
