@@ -72,7 +72,7 @@ bot.onText(/\/start/, async (msg) => {
 
   await bot.sendPhoto(
     chatId,
-    './banner.jpg',
+    'photo_2026-05-15_21-32-38.jpg',
     {
       caption: `🚀 Muzaffar Developer
 
