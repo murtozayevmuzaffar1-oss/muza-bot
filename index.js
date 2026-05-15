@@ -98,7 +98,7 @@ bot.on('callback_query', async (query) => {
   if (data === 'menu') {
     return bot.sendPhoto(
       chatId,
-      './banner.jpg',
+      '',
       {
         caption: `🚀 Asosiy menyu`,
         ...menu()
@@ -127,7 +127,7 @@ startup loyihalari ustida ishlamoqdaman.`, backMenu());
   if (data === 'about') {
     return bot.sendPhoto(
       chatId,
-      './about.jpg',
+      'photo_2026-05-15_21-31-44.jpg',
       {
         caption: `👨‍💻 Dasturchi haqida
 
