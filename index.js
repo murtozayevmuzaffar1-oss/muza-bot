@@ -98,7 +98,7 @@ bot.on('callback_query', async (query) => {
   if (data === 'menu') {
     return bot.sendPhoto(
       chatId,
-      '',
+      'photo_2026-05-15_21-32-38.jpg',
       {
         caption: `🚀 Asosiy menyu`,
         ...menu()
