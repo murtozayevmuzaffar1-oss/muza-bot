@@ -1,6 +1,17 @@
+const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 
-    const token = process.env.TOKEN;
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Muza bot ishlayapti');
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log('Server ishlayapti');
+});
+
+const token = process.env.TOKEN;
 const ADMIN_ID = 7536089106;
 
 const bot = new TelegramBot(token, { polling: true });
@@ -20,20 +31,9 @@ function menu() {
   return {
     reply_markup: {
       inline_keyboard: [
-        [
-          { text: '🌐 Portfolio', url: LINKS.portfolio },
-          { text: '☁️ Weather Uzb', url: LINKS.weather }
-        ],
-        [
-          { text: '💼 Xizmatlar', callback_data: 'services' },
-          { text: '🚀 Samarkand Inside', callback_data: 'startup' }
-        ],
-        [
-          { text: '📝 Buyurtma berish', callback_data: 'order' }
-        ],
-        [
-          { text: '👨‍💻 Dasturchi haqida', callback_data: 'about' }
-        ],
+        [{ text: '✅ Bajargan loyihalarim', callback_data: 'projects' }],
+        [{ text: '📝 Buyurtma berish', callback_data: 'order' }],
+        [{ text: '👨‍💻 Dasturchi haqida', callback_data: 'about' }],
         [
           { text: '📞 Aloqa', callback_data: 'contact' },
           { text: '❓ FAQ', callback_data: 'faq' }
@@ -62,12 +62,10 @@ bot.onText(/\/start/, (msg) => {
 Men Muzaffarning rasmiy xizmat botiman.
 
 Bu yerda siz:
-• web sayt
-• Telegram bot
-• mobile ilova
-• portfolio va aloqa ma’lumotlari
-
-bo‘yicha ma’lumot olishingiz mumkin.
+• bajarilgan loyihalarimni ko‘rishingiz
+• web sayt, bot yoki mobile ilova buyurtma qilishingiz
+• dasturchi haqida ma’lumot olishingiz
+• aloqa ma’lumotlarini ko‘rishingiz mumkin.
 
 Quyidagilardan birini tanlang 👇`, menu());
 });
@@ -80,6 +78,25 @@ bot.on('callback_query', async (query) => {
 
   if (data === 'menu') {
     return bot.sendMessage(chatId, 'Asosiy menyu 👇', menu());
+  }
+
+  if (data === 'projects') {
+    return bot.sendMessage(chatId, `✅ Bajargan loyihalarim
+
+🌐 Portfolio:
+${LINKS.portfolio}
+
+☁️ Weather Web:
+${LINKS.weather}
+
+📱 Weather App:
+Weather Uzb APK tayyor va ishlaydi.
+
+Hozirda:
+🚀 Samarkand Inside startupi
+🏠 Ijara ilovasi
+
+ustida ishlamoqdaman.`, backMenu());
   }
 
   if (data === 'about') {
@@ -95,53 +112,8 @@ Asosiy yo‘nalishlarim:
 • Mobile ilovalar
 • AI texnologiyalari
 
-Hozirda:
-🚀 Samarkand Inside startupi
-🏠 Ijara ilovasi
-🌦 Weather Uzb mobile ilovasi
-
-ustida ishlamoqdaman.
-
 Maqsadim:
 zamonaviy va foydali digital loyihalar yaratish 🚀`, backMenu());
-  }
-
-  if (data === 'services') {
-    return bot.sendMessage(chatId, `💼 Xizmatlar
-
-🌐 Web sayt
-• Portfolio sayt
-• Landing page
-• Biznes sayt
-
-🤖 Telegram bot
-• Buyurtma bot
-• Menyu bot
-• Aloqa bot
-
-📱 Mobile ilova
-• Flutter ilova
-• Android app
-• Weather app
-
-Asosiy maqsad:
-zamonaviy, tez ishlaydigan va responsive loyiha yaratish.`, backMenu());
-  }
-
-  if (data === 'startup') {
-    return bot.sendMessage(chatId, `🚀 Samarkand Inside
-
-Samarqand turizmi uchun yaratilayotgan startup loyiha.
-
-Loyihada:
-• 360° virtual tour
-• audio guide
-• tarixiy joylar
-• turist navigator
-• smart yo‘nalishlar
-
-Maqsad:
-Samarqand tarixini zamonaviy digital experience sifatida ko‘rsatish.`, backMenu());
   }
 
   if (data === 'contact') {
@@ -190,7 +162,6 @@ bot.on('message', async (msg) => {
   if (orders[chatId]?.step === 'name') {
     orders[chatId].name = text;
     orders[chatId].step = 'phone';
-
     return bot.sendMessage(chatId, `📞 Telefon raqamingizni yozing:
 
 Masalan:
@@ -200,7 +171,6 @@ Masalan:
   if (orders[chatId]?.step === 'phone') {
     orders[chatId].phone = text;
     orders[chatId].step = 'service';
-
     return bot.sendMessage(chatId, `💼 Qaysi xizmat kerak?
 
 Masalan:
@@ -251,7 +221,6 @@ ${chatId}`);
 
   if (text === '/stat') {
     if (chatId !== ADMIN_ID) return;
-
     return bot.sendMessage(chatId, `📊 Statistika
 
 Foydalanuvchilar:
